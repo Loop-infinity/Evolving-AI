@@ -12,6 +12,8 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     private float[][][] weights; //weight matrix
     private float fitness; //fitness of the network
 
+    public bool Initialzed = false;
+
 
     /// <summary>
     /// Initilizes and neural network with random weights
@@ -19,6 +21,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     /// <param name="layers">layers to the neural network</param>
     public NeuralNetwork(int[] layers)
     {
+        Initialzed = false;
         //deep copy of layers of this network 
         this.layers = new int[layers.Length];
         for (int i = 0; i < layers.Length; i++)
@@ -30,6 +33,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         //generate matrix
         InitNeurons();
         InitWeights();
+        Initialzed = true;
     }
 
     /// <summary>
