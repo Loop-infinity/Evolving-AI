@@ -11,7 +11,7 @@ public class GameHandler : MonoBehaviour
     private int predatorPopulationSize = 50;
     private int preyPopulationSize = 100;
     private int generationNumber = 0;
-    private int[] layers = new int[] { 20, 10, 10, 2 }; //20 inputs and 2 output
+    private int[] layers = new int[] { 10, 10, 10, 2 }; //20 inputs and 2 output
     private List<NeuralNetwork> predatorNets;
     private List<NeuralNetwork> preyNets;
     private bool leftMouseDown = false;
