@@ -16,6 +16,7 @@ public class GameHandler : MonoBehaviour
     private List<NeuralNetwork> preyNets;
     private bool leftMouseDown = false;
     private List<Predator> predatorList = null;
+    private bool predatorNetsInitComplete = false;
 
 
     void Timer()
@@ -34,18 +35,22 @@ public class GameHandler : MonoBehaviour
             }
             else
             {
-                predatorNets.Sort();
-                for (int i = 0; i < predatorPopulationSize / 2; i++)
+                if (predatorNets != null && predatorNetsInitComplete)
                 {
-                    predatorNets[i] = new NeuralNetwork(predatorNets[i + (predatorPopulationSize / 2)]);
-                    predatorNets[i].Mutate();
+                    predatorNets.Sort();
 
-                    predatorNets[i + (predatorPopulationSize / 2)] = new NeuralNetwork(predatorNets[i + (predatorPopulationSize / 2)]); 
-                }
+                    for (int i = 0; i < predatorPopulationSize / 2; i++)
+                    {
+                        predatorNets[i] = new NeuralNetwork(predatorNets[i + (predatorPopulationSize / 2)]);
+                        predatorNets[i].Mutate();
 
-                for (int i = 0; i < predatorPopulationSize; i++)
-                {
-                    predatorNets[i].SetFitness(0f);
+                        predatorNets[i + (predatorPopulationSize / 2)] = new NeuralNetwork(predatorNets[i + (predatorPopulationSize / 2)]);
+                    }
+
+                    for (int i = 0; i < predatorPopulationSize; i++)
+                    {
+                        predatorNets[i].SetFitness(0f);
+                    }
                 }
             }
 
@@ -108,6 +113,7 @@ public class GameHandler : MonoBehaviour
             net.Mutate();
             predatorNets.Add(net);
         }
+        predatorNetsInitComplete = true;
     }
 
     void InitPreyNeuralNetworks()
