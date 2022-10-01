@@ -47,7 +47,7 @@ public class Predator : MonoBehaviour
     {
         //Move();
         var rayResult = CastViewConeRays();
-        if(net != null && net.Initialzed)
+        if(net != null && net.Initialized)
         {
             var outputs = net?.FeedForward(rayResult);
         }
