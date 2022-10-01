@@ -8,8 +8,8 @@ public class GameHandler : MonoBehaviour
     public GameObject prey;
 
     private bool isTraning = false;
-    private int predatorPopulationSize = 50;
-    private int preyPopulationSize = 100;
+    private int predatorPopulationSize = 20;
+    private int preyPopulationSize = 50;
     private int generationNumber = 0;
     private int[] layers = new int[] { 10, 10, 10, 2 }; //20 inputs and 2 output
     private List<NeuralNetwork> predatorNets;
@@ -25,7 +25,7 @@ public class GameHandler : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         if (isTraning == false)
         {
@@ -58,7 +58,7 @@ public class GameHandler : MonoBehaviour
             generationNumber++;
 
             isTraning = true;
-            Invoke("Timer", 15f);
+            Invoke("Timer", 25f);
             CreatePredatorBodies();
         }
 

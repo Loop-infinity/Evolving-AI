@@ -19,7 +19,7 @@ public class Predator : MonoBehaviour
     private int fieldOfView = 80;
 
     //the distance for which the entity can cast rays
-    private int viewRange = 20;
+    private int viewRange = 50;
 
     //the amount of rays cast within the cone of view
     private int viewRayCount = 10;
@@ -32,20 +32,25 @@ public class Predator : MonoBehaviour
 
     private NeuralNetwork net;
     private Rigidbody2D rBody;
+    private CircleCollider2D circleCollider;
 
     void Start()
     {
         //transform.position = position;
 
         rBody = GetComponent<Rigidbody2D>();
+        circleCollider = GetComponent<CircleCollider2D>();
     }
 
    // Update is called once per frame
     void FixedUpdate()
     {
-        Move();
+        //Move();
         var rayResult = CastViewConeRays();
-        net?.FeedForward(rayResult);
+        if(net != null && net.Initialized)
+        {
+            var outputs = net?.FeedForward(rayResult);
+        }
     }
 
     private void Move()
@@ -72,7 +77,9 @@ public class Predator : MonoBehaviour
     private RaycastHit2D CastRay(Vector3 forwardView, float angle){
         
         var dir = Quaternion.Euler(0, 0, angle) * forwardView;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, viewRange);
+        //var startPoint = GetPointOnCircle(circleCollider.radius, transform.position, angle);
+        var startPoint = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
         
         if (debug)
         {
@@ -85,16 +92,24 @@ public class Predator : MonoBehaviour
                 distance = hit.distance;
             }
 
-            Debug.DrawRay(transform.position, dir * distance, rayColor, Time.deltaTime);
+            Debug.DrawRay(startPoint, dir * distance, rayColor, Time.deltaTime);
         }
         
 
         return hit;
     }
 
+    private Vector2 GetPointOnCircle(float radius, Vector2 origin, float angle)
+    {
+        var x = radius * Mathf.Cos(angle);
+        var y = radius * Mathf.Sin(angle);
+
+        return origin + new Vector2(x, y);
+    }
+
     private float[] CastViewConeRays()
     {
-        var output = new float[fieldOfView];
+        var output = new float[viewRayCount];
         var degreesBetweenRays = fieldOfView / viewRayCount;
         var halfFov = fieldOfView / 2;
         var outputIndex = 0;
