@@ -77,7 +77,8 @@ public class Predator : MonoBehaviour
     private RaycastHit2D CastRay(Vector3 forwardView, float angle){
         
         var dir = Quaternion.Euler(0, 0, angle) * forwardView;
-        var startPoint = GetPointOnCircle(circleCollider.radius, transform.position, angle);
+        //var startPoint = GetPointOnCircle(circleCollider.radius, transform.position, angle);
+        var startPoint = transform.position;
         RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
         
         if (debug)
