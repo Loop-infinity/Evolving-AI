@@ -104,7 +104,10 @@ public class GameHandler : MonoBehaviour
         {
             for (int i = 0; i < preyList.Count; i++)
             {
-                GameObject.Destroy(preyList[i].gameObject);
+                if(preyList[i] != null)
+                {
+                    GameObject.Destroy(preyList[i].gameObject);
+                }
             }
         }
 
