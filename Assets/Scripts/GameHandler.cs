@@ -58,7 +58,7 @@ public class GameHandler : MonoBehaviour
             generationNumber++;
 
             isTraning = true;
-            Invoke("Timer", 25f);
+            Invoke("Timer", 60f);
             CreatePredatorBodies();
         }
 
@@ -95,7 +95,7 @@ public class GameHandler : MonoBehaviour
 
         for (int i = 0; i < predatorPopulationSize; i++)
         {
-            Predator predator = ((GameObject)Instantiate(predatorPrefab, new Vector3(UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-50f, 50f), 0), predatorPrefab.transform.rotation)).GetComponent<Predator>();
+            Predator predator = ((GameObject)Instantiate(predatorPrefab, new Vector3(UnityEngine.Random.Range(-350f, 350f), UnityEngine.Random.Range(-200f, 200f), 0), predatorPrefab.transform.rotation)).GetComponent<Predator>();
             predator.Init(predatorNets[i], prey.transform);
             predatorList.Add(predator);
         }
