@@ -19,7 +19,7 @@ public class Predator : MonoBehaviour
     private int fieldOfView = 80;
 
     //the distance for which the entity can cast rays
-    private int viewRange = 100;
+    private int viewRange = 50;
 
     //the amount of rays cast within the cone of view
     private int viewRayCount = 10;
@@ -81,27 +81,56 @@ public class Predator : MonoBehaviour
         }
     }
 
-    private RaycastHit2D CastRay(Vector3 forwardView, float angle){
-        
-        var dir = Quaternion.Euler(0, 0, angle) * forwardView;
-        //var startPoint = GetPointOnCircle(circleCollider.radius, transform.position, angle);
-        var startPoint = transform.position;
+    //OLD RAYCASTING THAT WAS SORT OF WORKING
+    //private RaycastHit2D CastRay(Vector3 forwardView, float angle){
+
+    //    var dir = Quaternion.Euler(0, 0, angle) * forwardView;
+    //    //var startPoint = GetPointOnCircle(circleCollider.radius, transform.position, angle);
+    //    var startPoint = transform.position;
+    //    RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
+
+    //    if (debug)
+    //    {
+    //        Color rayColor = Color.red;
+    //        float distance = viewRange;
+
+    //        if (hit.collider != null)
+    //        {
+    //            rayColor = Color.yellow;
+    //            distance = hit.distance;
+    //        }
+
+    //        Debug.DrawRay(startPoint, dir * distance, rayColor, Time.deltaTime);
+    //    }
+
+
+    //    return hit;
+    //}
+
+    private RaycastHit2D CastRay(float radialDistance, float angle)
+    {
+        var x = (Mathf.Sin(Mathf.Deg2Rad * angle)) * radialDistance;
+        var y = (Mathf.Cos(Mathf.Deg2Rad * angle)) * radialDistance;
+
+        var dir = new Vector3(x, y);
+
+        var startPoint = transform.position + (new Vector3(x, y));
         RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
-        
+
         if (debug)
         {
             Color rayColor = Color.red;
-            float distance = viewRange;
+            float distance = viewRange - radialDistance;
 
             if (hit.collider != null)
             {
                 rayColor = Color.yellow;
-                distance = hit.distance;
+                distance = hit.distance - radialDistance;
             }
 
-            Debug.DrawRay(startPoint, dir * distance, rayColor, Time.deltaTime);
+            Debug.DrawRay(startPoint, (dir/radialDistance) * distance, rayColor, Time.deltaTime);
         }
-        
+
 
         return hit;
     }
@@ -120,11 +149,12 @@ public class Predator : MonoBehaviour
         var degreesBetweenRays = fieldOfView / viewRayCount;
         var halfFov = fieldOfView / 2;
         var outputIndex = 0;
+        var radialDistance = circleCollider.radius * 6;
 
 
         for (int i = -(halfFov); i < (halfFov); i+=degreesBetweenRays)
         {
-            var hit = CastRay(transform.right, i);
+            var hit = CastRay(radialDistance, i);
 
             if (hit.collider != null)
             {              
