@@ -42,6 +42,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     /// <param name="copyNetwork">Network to deep copy</param>
     public NeuralNetwork(NeuralNetwork copyNetwork)
     {
+        Initialized = false;
         this.layers = new int[copyNetwork.layers.Length];
         for (int i = 0; i < copyNetwork.layers.Length; i++)
         {
@@ -51,6 +52,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         InitNeurons();
         InitWeights();
         CopyWeights(copyNetwork.weights);
+        Initialized = true;
     }
 
     private void CopyWeights(float[][][] copyWeights)
