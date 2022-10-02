@@ -33,6 +33,8 @@ public class Predator : MonoBehaviour
     private NeuralNetwork net;
     private Rigidbody2D rBody;
     private CircleCollider2D circleCollider;
+    const long angVelocityMultiplier = 3;
+    const long speedMultiplier = 5;
 
     void Start()
     {
@@ -50,7 +52,13 @@ public class Predator : MonoBehaviour
         if(net != null && net.Initialized)
         {
             var outputs = net?.FeedForward(rayResult);
+            transform.Rotate(0, 0, outputs[0] * angVelocityMultiplier, Space.World);//controls the predator's rotation
+            transform.position += this.transform.right * outputs[1] * speedMultiplier; //control the movement
+            //rBody.angularVelocity = outputs[0] * angVelocityMultiplier;
+            //rBody.velocity = this.transform.right * outputs[1] * speed;
+
         }
+
     }
 
     private void Move()
@@ -117,7 +125,7 @@ public class Predator : MonoBehaviour
 
         for (int i = -(halfFov); i < (halfFov); i+=degreesBetweenRays)
         {
-            var hit = CastRay(Vector3.right, i);
+            var hit = CastRay(transform.right, i);
 
             if (hit.collider != null)
             {              

@@ -58,7 +58,7 @@ public class GameHandler : MonoBehaviour
             generationNumber++;
 
             isTraning = true;
-            Invoke("Timer", 25f);
+            Invoke("Timer", 60f);
             CreatePredatorBodies();
         }
 
