@@ -28,7 +28,6 @@ public class Predator : MonoBehaviour
 
 
     private bool initilized = false;
-    private Transform prey;
 
     private NeuralNetwork net;
     private Rigidbody2D rBody;
@@ -143,9 +142,8 @@ public class Predator : MonoBehaviour
         return output;
     }
 
-    public void Init(NeuralNetwork net, Transform prey)
+    public void Init(NeuralNetwork net)
     {
-        this.prey = prey;
         this.net = net;
         initilized = true;
     }
