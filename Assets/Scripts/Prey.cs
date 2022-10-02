@@ -6,7 +6,6 @@ using UnityEngine;
 public class Prey : MonoBehaviour
 {
     private Vector2 position;
-    private int instanceId;
 
     private int energy = 10;
     private int speed;
@@ -94,7 +93,6 @@ public class Prey : MonoBehaviour
     {
         net = neuralNetwork;
         initilized = true;
-        instanceId = GetInstanceID();
     }
 
     private RaycastHit2D CastRay(float radialDistance, float angle)
