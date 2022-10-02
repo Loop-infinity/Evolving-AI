@@ -19,7 +19,7 @@ public class Predator : MonoBehaviour
     private int fieldOfView = 80;
 
     //the distance for which the entity can cast rays
-    private int viewRange = 50;
+    private int viewRange = 100;
 
     //the amount of rays cast within the cone of view
     private int viewRayCount = 10;
