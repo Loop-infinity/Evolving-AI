@@ -25,6 +25,7 @@ public class Predator : MonoBehaviour
     private int viewRayCount = 10;
 
     //private float time = 0;
+    public int KillCount { get; set; }
 
 
     private bool initilized = false;
@@ -176,6 +177,26 @@ public class Predator : MonoBehaviour
     {
         this.net = net;
         initilized = true;
+    }
+
+    private void IncrementPredatorKillCount()
+    {
+        KillCount++;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.name == "Prey(Clone)")
+        {
+            Eat(collision.gameObject);
+        }
+    }
+
+    private void Eat(GameObject prey)
+    {
+        IncrementPredatorKillCount();
+        net.AddFitness(1);
+        GameObject.Destroy(prey);
     }
 
 }
