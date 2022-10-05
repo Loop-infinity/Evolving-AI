@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameHandler : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class GameHandler : MonoBehaviour
 
     private List<Prey> preyList = null;
 
-
+    public Text generationNumberText;
     void Timer()
     {
         isTraning = false;
@@ -52,6 +53,7 @@ public class GameHandler : MonoBehaviour
 
 
             generationNumber++;
+            generationNumberText.text = "Generation No: " + generationNumber;
 
             isTraning = true;
             Invoke("Timer", 60f);
