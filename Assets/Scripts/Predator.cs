@@ -19,7 +19,7 @@ public class Predator : MonoBehaviour
     private int fieldOfView = 80;
 
     //the distance for which the entity can cast rays
-    private int viewRange = 50;
+    private int viewRange = 100;
 
     //the amount of rays cast within the cone of view
     private int viewRayCount = 10;
@@ -34,7 +34,7 @@ public class Predator : MonoBehaviour
     private Rigidbody2D rBody;
     private CircleCollider2D circleCollider;
     const long angVelocityMultiplier = 3;
-    const long speedMultiplier = 5;
+    const long speedMultiplier = 12;
 
     void Start()
     {
@@ -110,12 +110,9 @@ public class Predator : MonoBehaviour
 
     private RaycastHit2D CastRay(float radialDistance, float angle)
     {
-        var x = (Mathf.Sin(Mathf.Deg2Rad * angle)) * radialDistance;
-        var y = (Mathf.Cos(Mathf.Deg2Rad * angle)) * radialDistance;
+        var dir = Quaternion.Euler(0, 0, angle) * transform.right;
 
-        var dir = new Vector3(x, y);
-
-        var startPoint = transform.position + (new Vector3(x, y));
+        var startPoint = transform.position + (dir * radialDistance);
         RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
 
         if (debug)
@@ -129,7 +126,7 @@ public class Predator : MonoBehaviour
                 distance = hit.distance - radialDistance;
             }
 
-            Debug.DrawRay(startPoint, (dir/radialDistance) * distance, rayColor, Time.deltaTime);
+            Debug.DrawRay(startPoint, (dir) * distance, rayColor, Time.deltaTime);
         }
 
 
@@ -150,14 +147,14 @@ public class Predator : MonoBehaviour
         var degreesBetweenRays = fieldOfView / viewRayCount;
         var halfFov = fieldOfView / 2;
         var outputIndex = 0;
-        var radialDistance = circleCollider.radius * 6;
+        var radialDistance = circleCollider.radius * 5.5f;
 
 
         for (int i = -(halfFov); i < (halfFov); i+=degreesBetweenRays)
         {
             var hit = CastRay(radialDistance, i);
 
-            if (hit.collider != null)
+            if (hit.collider != null && hit.collider.gameObject.name == "Prey(Clone)")
             {              
                 //doing this math as float gives 0 so use decimal then convert back to float
                 decimal normalisedDistance = (1m / viewRange) * (decimal)hit.distance;
@@ -186,7 +183,7 @@ public class Predator : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "Prey(Clone)")
+        if (net != null && net.Initialized && collision.gameObject.name == "Prey(Clone)")
         {
             Eat(collision.gameObject);
         }
@@ -197,6 +194,11 @@ public class Predator : MonoBehaviour
         IncrementPredatorKillCount();
         net.AddFitness(1);
         GameObject.Destroy(prey);
+    }
+
+    public void SetPredatorColor(Color color)
+    {
+        this.GetComponent<SpriteRenderer>().color = color;
     }
 
 }

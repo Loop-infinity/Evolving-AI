@@ -9,7 +9,7 @@ public class GameHandler : MonoBehaviour
 
     private bool isTraning = false;
     private int predatorPopulationSize = 20;
-    private int preyPopulationSize = 50;
+    private int preyPopulationSize = 40;
     private int generationNumber = 0;
     private int[] layers = new int[] { 10, 10, 10, 2 }; //20 inputs and 2 output
     private List<NeuralNetwork> predatorNets;
@@ -91,9 +91,15 @@ public class GameHandler : MonoBehaviour
 
         for (int i = 0; i < predatorPopulationSize; i++)
         {
-            Predator predator = ((GameObject)Instantiate(predatorPrefab, new Vector3(UnityEngine.Random.Range(-350f, 350f), UnityEngine.Random.Range(-200f, 200f), 0), predatorPrefab.transform.rotation)).GetComponent<Predator>();
+            var predatorGameObj = ((GameObject)Instantiate(predatorPrefab, new Vector3(UnityEngine.Random.Range(-350f, 350f), UnityEngine.Random.Range(-200f, 200f), 0), predatorPrefab.transform.rotation));
+            Predator predator = predatorGameObj.GetComponent<Predator>();
             predator.Init(predatorNets[i]);
             predatorList.Add(predator);
+            //Change the fittest predator's color to blue
+            if (i == predatorPopulationSize - 1)
+            {
+                predator.SetPredatorColor(Color.blue);
+            }
         }
 
     }
@@ -152,6 +158,7 @@ public class GameHandler : MonoBehaviour
     void CopyMutatePredatorNeuralNetworks()
     {
         predatorNets.Sort();
+        Debug.Log("Highest Fitness Score: " + predatorNets[predatorPopulationSize - 1].GetFitness());
 
         for (int i = 0; i < predatorPopulationSize / 2; i++)
         {
@@ -165,6 +172,7 @@ public class GameHandler : MonoBehaviour
         {
             predatorNets[i].SetFitness(0f);
         }
+        
     }
 
     void CopyMutatePreyNeuralNetworks()
