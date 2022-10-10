@@ -21,11 +21,23 @@ public class Prey : BaseNeuralNetworkPawn
     private bool isMoving = false;
     private Vector2 currentMovement = default;
 
+    const long angVelocityMultiplier = 3;
+    const long speedMultiplier = 12;
+
     // Update is called once per frame
     void FixedUpdate()
     {
-        CastViewConeRays();
-        Move();
+        var rayResult = CastViewConeRays("Predator(Clone)");
+
+        if (net != null && net.Initialized)
+        {
+            //yay!! the prey survived another update, give it a cookie!
+            net.AddFitness(1);
+
+            var outputs = net?.FeedForward(rayResult);
+            transform.Rotate(0, 0, outputs[0] * angVelocityMultiplier, Space.World);//controls the predator's rotation
+            transform.position += this.transform.right * outputs[1] * speedMultiplier; //control the movement
+        }
         //position = new Vector2(position.x + Random.Range(-0.02f, 0.02f), position.y + Random.Range(-0.02f, 0.02f));
         //transform.position = position;
         //Debug.Log(transform.position);
