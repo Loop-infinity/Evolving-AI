@@ -79,12 +79,12 @@ namespace Assets.Scripts.Pawns
         /// <returns></returns>
         protected virtual float[] CastViewConeRays(string targetGameObjectName = null)
         {
-            var output = new float[viewRayCount];
+            var output = new float[viewRayCount + 1];
             var degreesBetweenRays = fieldOfView / viewRayCount;
             var halfFov = fieldOfView / 2f;
             var outputIndex = 0;
             var radialDistance = circleCollider.radius * 5.5f;
-
+            float nothingInSight = 1;
 
             for (float i = -(halfFov); i < (halfFov); i += degreesBetweenRays)
             {
@@ -93,6 +93,7 @@ namespace Assets.Scripts.Pawns
                 if (hit.collider != null && (targetGameObjectName == null || hit.collider.gameObject.name == targetGameObjectName))
                 {
                     output[outputIndex] = (1f / viewRange) * hit.distance;
+                    nothingInSight = 0;
                 }
                 else
                 {
@@ -100,6 +101,8 @@ namespace Assets.Scripts.Pawns
                 }
                 outputIndex++;
             }
+
+            output[viewRayCount] = nothingInSight;
 
             return output;
         }
