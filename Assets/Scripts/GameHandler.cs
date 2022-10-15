@@ -9,7 +9,7 @@ public class GameHandler : MonoBehaviour
     public GameObject preyPrefab;
 
     private bool isTraning = false;
-    private int predatorPopulationSize = 20;
+    private int predatorPopulationSize = 40;
     private int preyPopulationSize = 40;
     private int generationNumber = 0;
     private int[] layers = new int[] { 11, 10, 10, 2 }; //20 inputs and 2 output
@@ -85,7 +85,10 @@ public class GameHandler : MonoBehaviour
         {
             for (int i = 0; i < predatorList.Count; i++)
             {
-                GameObject.Destroy(predatorList[i].gameObject);
+                if(predatorList[i] != null)
+                {
+                    GameObject.Destroy(predatorList[i].gameObject);
+                }
             }
         }
 
@@ -175,6 +178,15 @@ public class GameHandler : MonoBehaviour
             predatorNets[i].SetFitness(0f);
         }
         
+    }
+
+    public void RepoducePredator(GameObject predator)
+    {
+        var child = ((GameObject)Instantiate(predator, predator.transform.position, predator.transform.rotation)).GetComponent<Predator>();
+        var parent = predator.GetComponent<Predator>();
+
+        child.Init(new NeuralNetwork(parent.net));
+        child.Energy = 100;
     }
 
     void CopyMutatePreyNeuralNetworks()

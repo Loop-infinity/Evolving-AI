@@ -22,7 +22,7 @@ public class Prey : BaseNeuralNetworkPawn
     private Vector2 currentMovement = default;
 
     const long angVelocityMultiplier = 3;
-    const long speedMultiplier = 12;
+    const long speedMultiplier = 6;
 
     // Update is called once per frame
     void FixedUpdate()
