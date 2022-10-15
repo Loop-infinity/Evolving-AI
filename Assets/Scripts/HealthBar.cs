@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void UpdateEnergy(float energy)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //transform.localScale = new Vector2(Predator.Energy, 0.5f);
+        transform.localScale = new Vector2(energy / 10, 0.5f);
     }
 }

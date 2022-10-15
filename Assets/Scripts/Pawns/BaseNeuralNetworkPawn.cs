@@ -24,7 +24,7 @@ namespace Assets.Scripts.Pawns
         /// </summary>
         protected virtual int viewRayCount => 10;
 
-        protected NeuralNetwork net;
+        public NeuralNetwork net;
         protected bool initialized = false;
 
         protected Rigidbody2D rBody;
