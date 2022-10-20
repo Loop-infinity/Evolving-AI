@@ -1,16 +1,47 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Assets.Scripts.Pawns
 {
+    [System.Serializable]
     public class GenericPawn : BaseNeuralNetworkPawn
     {
         public GameObject foodPrefab;
-        public float Energy { get; protected set; }
+
+        public float _energy;
+        public float _energyStored;
+        public float _lastConsumption;
+
+        public float Energy
+        {
+            get
+            {
+                return _energy;
+            }
+            protected set
+            {
+                _energy = value;
+            }
+        }
         public float MaxEnergy { get; protected set; }
+
+        [SerializeField]
+        public float EnergyStore
+        {
+            get
+            {
+                return _energyStored;
+            }
+            protected set
+            {
+                _energyStored = value;
+            }
+        }
 
         private float currentSpeedMultiplier;
         private float currentAngleVelocityMultiplier;
         const float baseEnergyConsumptionRate = 0.005f;
+
 
         private HealthBar healthBar;
         private SpriteRenderer renderer;
@@ -25,7 +56,7 @@ namespace Assets.Scripts.Pawns
         void FixedUpdate()
         {
             net.AddFitness(0.1f);
-            RunNeuralNetworkIO();    
+            RunNeuralNetworkIO();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -63,14 +94,14 @@ namespace Assets.Scripts.Pawns
             {
                 GetComponent<SpriteRenderer>().color = Color.cyan;
             }
-            
+
 
             base.Init(neuralNetwork);
         }
 
         protected override void Move(float[] neuralNetworkOutputs)
         {
-            
+
             transform.Rotate(0, 0, neuralNetworkOutputs[0] * currentAngleVelocityMultiplier, Space.World);//controls the pawn's rotation
             transform.position += -this.transform.right * neuralNetworkOutputs[1] * currentSpeedMultiplier; //control the movement
 
@@ -83,6 +114,7 @@ namespace Assets.Scripts.Pawns
         protected void RunNeuralNetworkIO()
         {
             var rayResult = CastViewConeRays();
+            rayResult = rayResult.Concat(new float[1] { Energy / MaxEnergy }).ToArray();
 
             if (net != null && net.Initialized)
             {
@@ -102,7 +134,15 @@ namespace Assets.Scripts.Pawns
                 angleVelocityConsumption = Mathf.Max(angleVelocityConsumption, -angleVelocityConsumption);
                 speedVelocityConsumption = Mathf.Max(speedVelocityConsumption, -speedVelocityConsumption);
 
-                var consumption = (angleVelocityConsumption + speedVelocityConsumption) * baseEnergyConsumptionRate;
+                var consumption = _lastConsumption = (angleVelocityConsumption + speedVelocityConsumption) * baseEnergyConsumptionRate;
+
+                if (Energy < 50)
+                {
+                    var addE = Mathf.Min(10, EnergyStore);
+                    EnergyStore -= addE;
+                    Energy += addE;
+                }
+
                 Energy -= consumption;
 
                 healthBar.UpdateEnergy(Energy);
@@ -146,8 +186,12 @@ namespace Assets.Scripts.Pawns
             }
 
             if (canDestroy)
-            {
-                Energy += energy;
+            { 
+                if (Energy + energy > MaxEnergy)
+                {
+                    EnergyStore += (Energy + energy) - MaxEnergy;
+                }
+                Energy = Mathf.Min(Energy + energy, MaxEnergy);
                 GameObject.Destroy(gameObject);
             }
         }

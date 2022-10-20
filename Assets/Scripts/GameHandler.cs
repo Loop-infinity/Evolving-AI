@@ -190,7 +190,7 @@ public class GameHandler : MonoBehaviour
     void InitGenericPawnNeuralNetworks()
     {
         genericPawnNets = new List<NeuralNetwork>();
-        var genericPawnLayers = new int[] { 11, 10, 10, 4 };
+        var genericPawnLayers = new int[] { 13, 10, 10, 4 };
 
         for (int i = 0; i < genericPawnPopulationSize; i++)
         {
