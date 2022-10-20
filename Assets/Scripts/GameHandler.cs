@@ -258,7 +258,7 @@ public class GameHandler : MonoBehaviour
 
     void CopyMutateGenericPawnNeuralNetworks()
     {
-        predatorNets.Sort();
+        genericPawnNets.Sort();
         Debug.Log("Highest Fitness Score: " + predatorNets[predatorPopulationSize - 1].GetFitness());
 
         for (int i = 0; i < genericPawnPopulationSize / 2; i++)
