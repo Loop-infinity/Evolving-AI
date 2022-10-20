@@ -374,6 +374,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   predatorPrefab: {fileID: 7526125828493360349, guid: e669e975ce3acdb4dbd6b62b0853c20f, type: 3}
   preyPrefab: {fileID: 3455261405634140314, guid: 82cefa7a1add13149b1786a9c436943c, type: 3}
+  genericPawnPrefab: {fileID: 2716922346419767511, guid: 2134206277950504689ab84a17fa322c, type: 3}
+  timeScale: 0
   generationNumberText: {fileID: 1662027330}
 --- !u!4 &421307066
 Transform:

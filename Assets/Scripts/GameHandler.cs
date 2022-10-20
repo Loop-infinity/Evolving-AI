@@ -1,5 +1,7 @@
+using Assets.Scripts.Pawns;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,18 +9,24 @@ public class GameHandler : MonoBehaviour
 {
     public GameObject predatorPrefab;
     public GameObject preyPrefab;
+    public GameObject genericPawnPrefab;
+    public float timeScale = 1;
 
     private bool isTraning = false;
     private int predatorPopulationSize = 40;
     private int preyPopulationSize = 40;
+    private int genericPawnPopulationSize = 40;
     private int generationNumber = 0;
     private int[] layers = new int[] { 11, 10, 10, 2 }; //20 inputs and 2 output
     private List<NeuralNetwork> predatorNets;
     private List<NeuralNetwork> preyNets;
+    private List<NeuralNetwork> genericPawnNets;
     private bool leftMouseDown = false;
     private List<Predator> predatorList = null;
+    private List<GenericPawn> genericPawnList = null;
     private bool predatorNetsInitComplete = false;
     private bool preyNetsInitComplete = false;
+    private bool genericPawnNetsInitComplete = false;
 
     private List<Prey> preyList = null;
 
@@ -31,12 +39,18 @@ public class GameHandler : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (this.timeScale > 0)
+        {
+            Time.timeScale = timeScale;
+        }
+        
         if (isTraning == false)
         {
             if (generationNumber == 0)
             {
                 InitPredatorNeuralNetworks();
                 InitPreyNeuralNetworks();
+                InitGenericPawnNeuralNetworks();
             }
             else
             {
@@ -49,6 +63,21 @@ public class GameHandler : MonoBehaviour
                 {
                     CopyMutatePreyNeuralNetworks();
                 }
+
+                if (genericPawnNets != null && genericPawnNetsInitComplete)
+                {
+                    CopyMutateGenericPawnNeuralNetworks();
+                }
+
+                var food = GameObject.FindGameObjectsWithTag("Food");
+
+                if (food.Length > 50)
+                {
+                    foreach (var f in food.Skip(50))
+                    {
+                        Destroy(f);
+                    }
+                }
             }
 
 
@@ -59,9 +88,12 @@ public class GameHandler : MonoBehaviour
             Invoke("Timer", 60f);
             CreatePredatorBodies();
             CreatePreyBodies();
-        }
+            CreateGenericPawnBodies();
+        }       
+    }
 
-
+    private void Update()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             leftMouseDown = true;
@@ -132,6 +164,42 @@ public class GameHandler : MonoBehaviour
         }
     }
 
+    private void CreateGenericPawnBodies()
+    {
+        if (genericPawnList != null)
+        {
+            for (int i = 0; i < genericPawnList.Count; i++)
+            {
+                if (genericPawnList[i] != null)
+                {
+                    GameObject.Destroy(genericPawnList[i].gameObject);
+                }
+            }
+        }
+
+        genericPawnList = new();
+
+        for (int i = 0; i < genericPawnPopulationSize; i++)
+        {
+            GenericPawn genericPawn = Instantiate(genericPawnPrefab, new Vector3(Random.Range(-350f, 350f), UnityEngine.Random.Range(-200f, 200f), 0), genericPawnPrefab.transform.rotation).GetComponent<GenericPawn>();
+            genericPawn.Init(genericPawnNets[i]);
+            genericPawnList.Add(genericPawn);
+        }
+    }
+
+    void InitGenericPawnNeuralNetworks()
+    {
+        genericPawnNets = new List<NeuralNetwork>();
+        var genericPawnLayers = new int[] { 11, 10, 10, 4 };
+
+        for (int i = 0; i < genericPawnPopulationSize; i++)
+        {
+            var net = new NeuralNetwork(genericPawnLayers);
+            net.Mutate();
+            genericPawnNets.Add(net);
+        }
+    }
+
     void InitPredatorNeuralNetworks()
     {
         
@@ -177,7 +245,6 @@ public class GameHandler : MonoBehaviour
         {
             predatorNets[i].SetFitness(0f);
         }
-        
     }
 
     public void RepoducePredator(GameObject predator)
@@ -187,6 +254,25 @@ public class GameHandler : MonoBehaviour
 
         child.Init(new NeuralNetwork(parent.net));
         child.Energy = 100;
+    }
+
+    void CopyMutateGenericPawnNeuralNetworks()
+    {
+        predatorNets.Sort();
+        Debug.Log("Highest Fitness Score: " + predatorNets[predatorPopulationSize - 1].GetFitness());
+
+        for (int i = 0; i < genericPawnPopulationSize / 2; i++)
+        {
+            genericPawnNets[i] = new NeuralNetwork(genericPawnNets[i + (genericPawnPopulationSize / 2)]);
+            genericPawnNets[i].Mutate();
+
+            genericPawnNets[i + (genericPawnPopulationSize / 2)] = new NeuralNetwork(genericPawnNets[i + (genericPawnPopulationSize / 2)]);
+        }
+
+        for (int i = 0; i < genericPawnPopulationSize; i++)
+        {
+            genericPawnNets[i].SetFitness(0f);
+        }
     }
 
     void CopyMutatePreyNeuralNetworks()

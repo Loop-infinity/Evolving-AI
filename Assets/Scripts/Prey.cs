@@ -12,11 +12,11 @@ public class Prey : BaseNeuralNetworkPawn
 
     bool increasingSize = true;
 
-    protected override float fieldOfView => 360;
+    protected override float FieldOfView => 360;
 
-    protected override float viewRange => 50;
+    protected override float ViewRange => 50;
 
-    protected override int viewRayCount => 10;
+    protected override int ViewRayCount => 10;
 
     private bool isMoving = false;
     private Vector2 currentMovement = default;
@@ -43,7 +43,7 @@ public class Prey : BaseNeuralNetworkPawn
         //Debug.Log(transform.position);
     }
 
-    protected override void Move()
+    protected override void Move(float[] neuralNetworkOutputs)
     {
         var newMovement = !isMoving;
 

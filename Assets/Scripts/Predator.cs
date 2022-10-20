@@ -13,9 +13,9 @@ public class Predator : BaseNeuralNetworkPawn
     const float MaxEnergy = 100f;
     private int speed;
 
-    protected override float fieldOfView => 80;
+    protected override float FieldOfView => 80;
 
-    protected override float viewRange => 100;
+    protected override float ViewRange => 100;
 
     public int KillCount { get; set; }
 
@@ -91,7 +91,7 @@ public class Predator : BaseNeuralNetworkPawn
         this.GetComponent<SpriteRenderer>().color = color;
     }
 
-    protected override void Move()
+    protected override void Move(float[] neuralNetworkOutputs)
     {
         position = transform.position;
         position = new Vector2(position.x + UnityEngine.Random.Range(-0.5f, 0.5f), position.y + UnityEngine.Random.Range(-0.5f, 0.5f));

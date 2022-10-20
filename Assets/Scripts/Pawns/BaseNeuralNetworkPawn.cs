@@ -14,15 +14,15 @@ namespace Assets.Scripts.Pawns
         bool debug = true;
 
         //the cone width that the entity can use for raycasting
-        protected virtual float fieldOfView { get; }
+        protected virtual float FieldOfView { get; set; }
 
         //the distance for which the entity can cast rays
-        protected virtual float viewRange { get; }
+        protected virtual float ViewRange { get; set; }
 
         /// <summary>
         /// The amount of rays cast within the cone of view
         /// </summary>
-        protected virtual int viewRayCount => 10;
+        protected virtual int ViewRayCount { get; set; } = 10;
 
         public NeuralNetwork net;
         protected bool initialized = false;
@@ -39,7 +39,7 @@ namespace Assets.Scripts.Pawns
             circleCollider = GetComponent<CircleCollider2D>();
         }
 
-        protected abstract void Move();
+        protected abstract void Move(float[] neuralNetworkOutputs);
 
         public virtual void Init(NeuralNetwork neuralNetwork)
         {
@@ -52,12 +52,12 @@ namespace Assets.Scripts.Pawns
             var dir = Quaternion.Euler(0, 0, angle) * transform.right;
 
             var startPoint = transform.position + (dir * radialDistance);
-            RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, viewRange);
+            RaycastHit2D hit = Physics2D.Raycast(startPoint, dir, ViewRange);
 
             if (debug)
             {
                 Color rayColor = Color.red;
-                float distance = viewRange - radialDistance;
+                float distance = ViewRange - radialDistance;
 
                 if (hit.collider != null)
                 {
@@ -79,9 +79,9 @@ namespace Assets.Scripts.Pawns
         /// <returns></returns>
         protected virtual float[] CastViewConeRays(string targetGameObjectName = null)
         {
-            var output = new float[viewRayCount + 1];
-            var degreesBetweenRays = fieldOfView / viewRayCount;
-            var halfFov = fieldOfView / 2f;
+            var output = new float[ViewRayCount + 1];
+            var degreesBetweenRays = FieldOfView / ViewRayCount;
+            var halfFov = FieldOfView / 2f;
             var outputIndex = 0;
             var radialDistance = circleCollider.radius * 5.5f;
             float nothingInSight = 1;
@@ -92,7 +92,7 @@ namespace Assets.Scripts.Pawns
 
                 if (hit.collider != null && (targetGameObjectName == null || hit.collider.gameObject.name == targetGameObjectName))
                 {
-                    output[outputIndex] = (1f / viewRange) * hit.distance;
+                    output[outputIndex] = (1f / ViewRange) * hit.distance;
                     nothingInSight = 0;
                 }
                 else
@@ -102,7 +102,7 @@ namespace Assets.Scripts.Pawns
                 outputIndex++;
             }
 
-            output[viewRayCount] = nothingInSight;
+            output[ViewRayCount] = nothingInSight;
 
             return output;
         }
